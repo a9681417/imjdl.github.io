@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="精确值和全文Elasticsearch 中的数据可以概括的分为两类：精确值和全文。 精确值  例如：用户ID、日期等，或者是email用户名等。 全文 全文则是文本数据（通常以人类容易识别的语言书写），例如一个博客或邮件的内容。 在搜索时，精确值很容易查询。它的结果就为两个有或没有。而全文则麻烦的多，在我们搜索时并没有说要对全文进行精确的匹配，而是要在全文中找出与我期待的信息相关的数据，希望搜索能">
+<meta name="keywords" content="ElasticSearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch mapping介绍">
+<meta property="og:url" content="http://yoursite.com/2018/03/12/elastcisearch mapping介绍/index.html">
+<meta property="og:site_name" content="elloit blogs">
+<meta property="og:description" content="精确值和全文Elasticsearch 中的数据可以概括的分为两类：精确值和全文。 精确值  例如：用户ID、日期等，或者是email用户名等。 全文 全文则是文本数据（通常以人类容易识别的语言书写），例如一个博客或邮件的内容。 在搜索时，精确值很容易查询。它的结果就为两个有或没有。而全文则麻烦的多，在我们搜索时并没有说要对全文进行精确的匹配，而是要在全文中找出与我期待的信息相关的数据，希望搜索能">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T08:50:54.100Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElasticSearch mapping介绍">
+<meta name="twitter:description" content="精确值和全文Elasticsearch 中的数据可以概括的分为两类：精确值和全文。 精确值  例如：用户ID、日期等，或者是email用户名等。 全文 全文则是文本数据（通常以人类容易识别的语言书写），例如一个博客或邮件的内容。 在搜索时，精确值很容易查询。它的结果就为两个有或没有。而全文则麻烦的多，在我们搜索时并没有说要对全文进行精确的匹配，而是要在全文中找出与我期待的信息相关的数据，希望搜索能">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ElasticSearch mapping介绍</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/03/13/Elasticsearch_mget_bulk/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/03/10/倒排索引/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&text=ElasticSearch mapping介绍"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&is_video=false&description=ElasticSearch mapping介绍"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch mapping介绍&body=Check out this article: http://yoursite.com/2018/03/12/elastcisearch mapping介绍/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&name=ElasticSearch mapping介绍&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#精确值和全文"><span class="toc-number">1.</span> <span class="toc-text">精确值和全文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">2.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射"><span class="toc-number">3.</span> <span class="toc-text">映射</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-映射是什么-以前没用过映射不也没事儿吗"><span class="toc-number">3.0.1.</span> <span class="toc-text">回答: 映射是什么?以前没用过映射不也没事儿吗?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-介绍映射为什么要先说精确值、全文和倒排索引"><span class="toc-number">3.0.2.</span> <span class="toc-text">回答: 介绍映射为什么要先说精确值、全文和倒排索引?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-怎么使用映射"><span class="toc-number">3.0.3.</span> <span class="toc-text">回答: 怎么使用映射?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建mapping"><span class="toc-number">3.0.4.</span> <span class="toc-text">创建mapping</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查看mapping"><span class="toc-number">3.0.5.</span> <span class="toc-text">查看mapping</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意"><span class="toc-number">4.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#别名操作"><span class="toc-number">5.</span> <span class="toc-text">别名操作</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ElasticSearch mapping介绍
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">elloit blogs</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-03-12T07:29:00.000Z" itemprop="datePublished">2018-03-12</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="精确值和全文"><a href="#精确值和全文" class="headerlink" title="精确值和全文"></a>精确值和全文</h3><p>Elasticsearch 中的数据可以概括的分为两类：精确值和全文。</p>
+<p><em>精确值</em> </p>
+<p>例如：用户ID、日期等，或者是email用户名等。</p>
+<p><em>全文</em></p>
+<p>全文则是文本数据（通常以人类容易识别的语言书写），例如一个博客或邮件的内容。</p>
+<p>在搜索时，精确值很容易查询。它的结果就为两个有或没有。而全文则麻烦的多，在我们搜索时并没有说要对全文进行精确的匹配，而是要在全文中找出与我期待的信息相关的数据，希望搜索能够理解我们的意图。我们平时对一些简单的小的文本，搜索其内容时可以进行遍历，但是当我们面对大量的文档时，全文遍历却又显得那么笨拙慢速。这时我们有了倒排索引的概念，这个我在原来的博文里介绍过了<a href="http://blog.elloit.xin/article/page/7/" target="_blank" rel="noopener">传送门</a>。</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>看到这里，您可能会有以下的问题:</p>
+<ol>
+<li>映射是什么?以前没用过映射不也没事儿吗?</li>
+<li>介绍映射为什么要先说精确值、全文和倒排索引?</li>
+<li>怎么使用映射?</li>
+</ol>
+<p>现在我们一起带着上面的3个问题，继续看下去。:)</p>
+<h3 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h3><h5 id="回答-映射是什么-以前没用过映射不也没事儿吗"><a href="#回答-映射是什么-以前没用过映射不也没事儿吗" class="headerlink" title="回答: 映射是什么?以前没用过映射不也没事儿吗?"></a>回答: <code>映射是什么?以前没用过映射不也没事儿吗?</code></h5><p>映射(mapping) 类比到关系型数据库的话就是，各个字段的类型。我们之前没有自己设置映射，其实es已经帮我们做了。</p>
+<p>比如:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">PUT test</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"settings"</span>: &#123;</span><br><span class="line">    <span class="attr">"number_of_replicas"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"number_of_shards"</span>: <span class="number">5</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PUT test/qwe/1</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>:<span class="string">"asdasdasd"</span></span><br><span class="line">&#125;</span><br><span class="line">GET test/_mapping/</span><br></pre></td></tr></table></figure>
+<p>我们创建了一个test索引，随后往qwe类型里又插入了一条数据，然后我们查询test的mapping信息</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"test"</span>: &#123;</span><br><span class="line">    <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">      <span class="attr">"qwe"</span>: &#123;</span><br><span class="line">        <span class="attr">"properties"</span>: &#123;</span><br><span class="line">          <span class="attr">"name"</span>: &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">            <span class="attr">"fields"</span>: &#123;</span><br><span class="line">              <span class="attr">"keyword"</span>: &#123;</span><br><span class="line">                <span class="attr">"type"</span>: <span class="string">"keyword"</span>,</span><br><span class="line">                <span class="attr">"ignore_above"</span>: <span class="number">256</span></span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，是有mapping 信息的，这是es的<strong>动态映射</strong>机制，文档在写入es时，会根据输入的字段自动识别类型。</p>
+<h5 id="回答-介绍映射为什么要先说精确值、全文和倒排索引"><a href="#回答-介绍映射为什么要先说精确值、全文和倒排索引" class="headerlink" title="回答: 介绍映射为什么要先说精确值、全文和倒排索引?"></a>回答: <code>介绍映射为什么要先说精确值、全文和倒排索引?</code></h5><p>首先精确值和全文是es的两种不同的索引方式，而倒排索引很好的解决的全文检索的问题。了解过倒排索引，我们知道es在见数据存入时会将全文信息进行处理(也就是所说的分词)，这就加快了搜索的速度和准确度。</p>
+<h5 id="回答-怎么使用映射"><a href="#回答-怎么使用映射" class="headerlink" title="回答: 怎么使用映射?"></a>回答: <code>怎么使用映射?</code></h5><p>内置类型</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">字符串</td>
+<td style="text-align:left">text(可以进行分词)、keyword</td>
+</tr>
+<tr>
+<td style="text-align:left">数字</td>
+<td style="text-align:left">long、integer、short、byte、double、float</td>
+</tr>
+<tr>
+<td style="text-align:left">日期</td>
+<td style="text-align:left">date</td>
+</tr>
+<tr>
+<td style="text-align:left">bool类型</td>
+<td style="text-align:left">boolean</td>
+</tr>
+<tr>
+<td style="text-align:left">binary类型</td>
+<td style="text-align:left">binary</td>
+</tr>
+<tr>
+<td style="text-align:left">复杂类型</td>
+<td style="text-align:left">object、nested</td>
+</tr>
+<tr>
+<td style="text-align:left">geo类型</td>
+<td style="text-align:left">geo-point、geo-shape</td>
+</tr>
+<tr>
+<td style="text-align:left">专业类型</td>
+<td style="text-align:left">ip、competion</td>
+</tr>
+</tbody>
+</table>
+<p>常用的属性</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+<th>适合的类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>store</td>
+<td>值为yes表示存储，为no表示不存储，默认为no</td>
+<td>all</td>
+</tr>
+<tr>
+<td>index</td>
+<td>yes表示分析，no表示不分析，默认为true</td>
+<td>text</td>
+</tr>
+<tr>
+<td>null_value</td>
+<td>如果字段为空，可以设置一个默认值，比如”NA”</td>
+<td>all</td>
+</tr>
+<tr>
+<td>analyzer</td>
+<td>可以设置索引和搜索时分析器，默认使用的是standard分析器，还可以使用whitespace、simple、english</td>
+<td>all</td>
+</tr>
+<tr>
+<td>inclued_in_all</td>
+<td>默认es为每个文档定义一个特殊域_all,它的作用是让每个字段被搜索到，如果不想某个字段被搜索到，可以设置为false</td>
+<td>all</td>
+</tr>
+<tr>
+<td>format</td>
+<td>时间格式字符串的模式</td>
+<td>date</td>
+</tr>
+</tbody>
+</table>
+<h5 id="创建mapping"><a href="#创建mapping" class="headerlink" title="创建mapping"></a>创建mapping</h5><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">PUT website</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"settings"</span>: &#123;</span><br><span class="line">    <span class="attr">"number_of_replicas"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"number_of_shards"</span>: <span class="number">5</span></span><br><span class="line">  &#125;, </span><br><span class="line">    <span class="attr">"mappings"</span>:&#123;</span><br><span class="line">        <span class="attr">"blog"</span>:&#123;</span><br><span class="line">             <span class="attr">"properties"</span>: &#123;</span><br><span class="line">                 <span class="attr">"title"</span>:&#123;</span><br><span class="line">                     <span class="attr">"type"</span>:<span class="string">"text"</span>,</span><br><span class="line">                     <span class="attr">"analyzer"</span>: <span class="string">"ik_max_word"</span></span><br><span class="line">                 &#125;,</span><br><span class="line">                 <span class="attr">"ip"</span>:&#123;</span><br><span class="line">                   <span class="attr">"type"</span>:<span class="string">"ip"</span></span><br><span class="line">                 &#125;,</span><br><span class="line">                 <span class="attr">"comments"</span>:&#123;</span><br><span class="line">                   <span class="attr">"type"</span>:<span class="string">"integer"</span></span><br><span class="line">                 &#125;,</span><br><span class="line">                 <span class="attr">"publish_date"</span>:&#123;</span><br><span class="line">                   <span class="attr">"type"</span>:<span class="string">"date"</span>,</span><br><span class="line">                    <span class="attr">"format"</span>: [<span class="string">"yyyy-MM-dd"</span>]</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="查看mapping"><a href="#查看mapping" class="headerlink" title="查看mapping"></a>查看mapping</h5><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">GET website/_mapping</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"website"</span>: &#123;</span><br><span class="line">    <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">      <span class="attr">"blog"</span>: &#123;</span><br><span class="line">        <span class="attr">"properties"</span>: &#123;</span><br><span class="line">          <span class="attr">"comments"</span>: &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"integer"</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">"ip"</span>: &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"ip"</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">"publish_date"</span>: &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"date"</span>,</span><br><span class="line">            <span class="attr">"format"</span>: <span class="string">"[yyyy-MM-dd]"</span></span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">"title"</span>: &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">            <span class="attr">"analyzer"</span>: <span class="string">"ik_max_word"</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li>映射一旦创建，想要修改的话需要删除索引重新来过</li>
+<li>创建索引一定要，建立别名</li>
+</ul>
+<hr>
+<h3 id="别名操作"><a href="#别名操作" class="headerlink" title="别名操作"></a>别名操作</h3><p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/6.2/indices-aliases.html" target="_blank" rel="noopener">官方文档</a></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># 创建</span><br><span class="line">POST /_aliases</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"actions"</span> : [</span><br><span class="line">        &#123; <span class="attr">"add"</span> : &#123; <span class="attr">"index"</span> : <span class="string">"website"</span>, <span class="attr">"alias"</span> : <span class="string">"alias1"</span> &#125; &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"># 删除</span><br><span class="line">POST _aliases</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"actions"</span>: [</span><br><span class="line">    &#123;<span class="attr">"remove"</span>: &#123; <span class="attr">"index"</span>: <span class="string">"website"</span>, <span class="attr">"alias"</span>: <span class="string">"alias1"</span>&#125; &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"># 重命名</span><br><span class="line">POST /_aliases</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"actions"</span>:[</span><br><span class="line">      &#123;<span class="attr">"remove"</span>:&#123;<span class="attr">"index"</span>:<span class="string">"website"</span>,<span class="attr">"alias"</span>:<span class="string">"alias1"</span>&#125;&#125;,</span><br><span class="line">      &#123;<span class="attr">"add"</span>: &#123;<span class="attr">"index"</span>: <span class="string">"website"</span>, <span class="attr">"alias"</span>: <span class="string">"alias2"</span>&#125;&#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#精确值和全文"><span class="toc-number">1.</span> <span class="toc-text">精确值和全文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">2.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射"><span class="toc-number">3.</span> <span class="toc-text">映射</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-映射是什么-以前没用过映射不也没事儿吗"><span class="toc-number">3.0.1.</span> <span class="toc-text">回答: 映射是什么?以前没用过映射不也没事儿吗?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-介绍映射为什么要先说精确值、全文和倒排索引"><span class="toc-number">3.0.2.</span> <span class="toc-text">回答: 介绍映射为什么要先说精确值、全文和倒排索引?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#回答-怎么使用映射"><span class="toc-number">3.0.3.</span> <span class="toc-text">回答: 怎么使用映射?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#创建mapping"><span class="toc-number">3.0.4.</span> <span class="toc-text">创建mapping</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查看mapping"><span class="toc-number">3.0.5.</span> <span class="toc-text">查看mapping</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意"><span class="toc-number">4.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#别名操作"><span class="toc-number">5.</span> <span class="toc-text">别名操作</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&text=ElasticSearch mapping介绍"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&is_video=false&description=ElasticSearch mapping介绍"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch mapping介绍&body=Check out this article: http://yoursite.com/2018/03/12/elastcisearch mapping介绍/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&title=ElasticSearch mapping介绍"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/12/elastcisearch mapping介绍/&name=ElasticSearch mapping介绍&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 elloit
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

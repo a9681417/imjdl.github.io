@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00说明  Raw socket 即原始套接字，我们知道普通的socket在传输层往下对开发者来说是透明的，我们仅仅只需要提供一个IP和端口号，底层的数据包的构建由系统帮我们完成。Raw socket可以使我们构建自己想要的数据包。  从现在开始您将和我一起学习，从最基本的Socket编程一步步深入了解网络的奥秘，一起揭开原始套接字神秘的面纱。  0x01网络知识A)OSI模型   层 功能">
+<meta name="keywords" content="RawSocket">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(一) 原始套接字编程--网络基础">
+<meta property="og:url" content="http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/index.html">
+<meta property="og:site_name" content="elloit blogs">
+<meta property="og:description" content="0x00说明  Raw socket 即原始套接字，我们知道普通的socket在传输层往下对开发者来说是透明的，我们仅仅只需要提供一个IP和端口号，底层的数据包的构建由系统帮我们完成。Raw socket可以使我们构建自己想要的数据包。  从现在开始您将和我一起学习，从最基本的Socket编程一步步深入了解网络的奥秘，一起揭开原始套接字神秘的面纱。  0x01网络知识A)OSI模型   层 功能">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_032.png">
+<meta property="og:image" content="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_028.png">
+<meta property="og:image" content="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_033.png">
+<meta property="og:image" content="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_035.png">
+<meta property="og:updated_time" content="2018-08-19T09:09:47.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(一) 原始套接字编程--网络基础">
+<meta name="twitter:description" content="0x00说明  Raw socket 即原始套接字，我们知道普通的socket在传输层往下对开发者来说是透明的，我们仅仅只需要提供一个IP和端口号，底层的数据包的构建由系统帮我们完成。Raw socket可以使我们构建自己想要的数据包。  从现在开始您将和我一起学习，从最基本的Socket编程一步步深入了解网络的奥秘，一起揭开原始套接字神秘的面纱。  0x01网络知识A)OSI模型   层 功能">
+<meta name="twitter:image" content="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_032.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>(一) 原始套接字编程--网络基础</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/08/19/浅谈DDoS攻击与防御/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/05/30/Python知识全回顾/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&text=(一) 原始套接字编程--网络基础"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&is_video=false&description=(一) 原始套接字编程--网络基础"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=(一) 原始套接字编程--网络基础&body=Check out this article: http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&name=(一) 原始套接字编程--网络基础&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00说明"><span class="toc-number">1.</span> <span class="toc-text">0x00说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01网络知识"><span class="toc-number">2.</span> <span class="toc-text">0x01网络知识</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#A-OSI模型"><span class="toc-number">2.1.</span> <span class="toc-text">A)OSI模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#B-网际协议族"><span class="toc-number">2.2.</span> <span class="toc-text">B)网际协议族</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-IP协议和IP头部在Linux里的结构体"><span class="toc-number">2.3.</span> <span class="toc-text">C)IP协议和IP头部在Linux里的结构体</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02基本套接字使用和函数介绍"><span class="toc-number">3.</span> <span class="toc-text">0x02基本套接字使用和函数介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ioctl-函数"><span class="toc-number">3.1.</span> <span class="toc-text">ioctl() 函数</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        (一) 原始套接字编程--网络基础
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">elloit blogs</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-06-24T16:00:00.000Z" itemprop="datePublished">2018-06-25</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/RawSocket/">RawSocket</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="0x00说明"><a href="#0x00说明" class="headerlink" title="0x00说明"></a>0x00说明</h3><p>  Raw socket 即原始套接字，我们知道普通的socket在传输层往下对开发者来说是透明的，我们仅仅只需要提供一个IP和端口号，底层的数据包的构建由系统帮我们完成。Raw socket可以使我们构建自己想要的数据包。<br>  从现在开始您将和我一起学习，从最基本的Socket编程一步步深入了解网络的奥秘，一起揭开原始套接字神秘的面纱。</p>
+<hr>
+<h3 id="0x01网络知识"><a href="#0x01网络知识" class="headerlink" title="0x01网络知识"></a>0x01网络知识</h3><h4 id="A-OSI模型"><a href="#A-OSI模型" class="headerlink" title="A)OSI模型"></a>A)OSI模型</h4><table>
+<thead>
+<tr>
+<th>层</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>应用层为应用程序提供访问网络服务的接口。</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>表示层对网络传输的数据进行变换，使得多个主机之间传送的信息能够互相理解，包括数据的压缩、加密、格式的转换等。</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>会话层管理主机之间的会话过程，包括会话的建立、终止和会话过程的管理，来提供服务请求者和提供者之间的通信</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>传输层将上层数据处理为分段的数据，提供可靠和不可靠的传输，保证会话层的数据信息能够传送到另一方的会话层，传输的数据单位为数据段(segment)</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>负责将各个子网之间的数据进行路由选择，将数据从一个主机传送到另一个主机。本层传输的是数据包(packet)。</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>在物理介质之上提供可靠的数据传输，传输的是帧。</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>规定了物理线路和设备的触发、维护、关闭物理设备的特性。传输的是比特（b）流。</td>
+</tr>
+</tbody>
+</table>
+<p>OSI的7层结构中的底3层即物理层、数据链路层和网络层构成了通信子网，它为网络的上层提供通信服务。下层为上层提供服务，从上层看下层是透明的。还有，OSI模型并不是一个网络结构，应为它并没有定义每个层提供的通信协议和服务，它只是告诉我们每一个层应该做什么工作。OSI七层网络模型中的数据传输就是封装成帧和解封装的过程。</p>
+<hr>
+<p><img src="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_032.png" alt=""></p>
+<hr>
+<h4 id="B-网际协议族"><a href="#B-网际协议族" class="headerlink" title="B)网际协议族"></a>B)网际协议族</h4><p>OSI模型过于庞杂，现实实现很困难，现实中 TCP/IP协议栈得到了更广泛的应用。</p>
+<p><img src="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_028.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>OSI七层网络模型</th>
+<th>TCP/IP四层概念模型</th>
+<th>对应网络协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层（Application）</td>
+<td>应用层</td>
+<td>HTTP、TFTP, FTP, NFS, WAIS、SMTP</td>
+</tr>
+<tr>
+<td>表示层（Presentation）</td>
+<td>应用层</td>
+<td>Telnet, Rlogin, SNMP, Gopher</td>
+</tr>
+<tr>
+<td>会话层（Session）</td>
+<td>应用层</td>
+<td>SMTP, DNS</td>
+</tr>
+<tr>
+<td>传输层（Transport）</td>
+<td>传输层</td>
+<td>TCP, UDP</td>
+</tr>
+<tr>
+<td>网络层（Network）</td>
+<td>网络层</td>
+<td>IP, ICMP, ARP, RARP, AKP, UUCP</td>
+</tr>
+<tr>
+<td>数据链路层（Data Link）</td>
+<td>数据链路层</td>
+<td>FDDI, Ethernet, Arpanet, PDN, SLIP, PPP</td>
+</tr>
+<tr>
+<td>物理层（Physical）</td>
+<td>数据链路层</td>
+<td>IEEE 802.1A, IEEE 802.2到IEEE 802.11</td>
+</tr>
+</tbody>
+</table>
+<p>TCP/IP参考模型的层次功能<br><img src="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_033.png" alt=""></p>
+<hr>
+<h4 id="C-IP协议和IP头部在Linux里的结构体"><a href="#C-IP协议和IP头部在Linux里的结构体" class="headerlink" title="C)IP协议和IP头部在Linux里的结构体"></a>C)IP协议和IP头部在Linux里的结构体</h4><p><strong><em>IP协议</em></strong><br>IP协议为TCP、UDP、ICMP等协议提供传输的通路。<br>主要作用为:</p>
+<pre><code>1、数据传送：将数据从一个主机传到另一个主机
+2、寻址：根据子网划分和IP地址，发现正确的目的主机地址
+3、路由选择：选择数据在互联网上的传送路径
+4、数据报文的分段：当传送的数据大于MTU(最大传输单元)时，将数据进行分段发送和接受并组装
+</code></pre><p>IP头部的格式:<br><img src="http://ovjdtotu0.bkt.clouddn.com/%E9%80%89%E5%8C%BA_035.png" alt=""><br>IP结构体（/usr/include/netinet/ip.h）<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ip</span>&#123;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __BYTE_ORDER == __LITTLE_ENDIAN <span class="comment">/*如果是小端*/</span></span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> ip_hl:<span class="number">4</span>;		<span class="comment">/* 头部长度 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> ip_v:<span class="number">4</span>;		<span class="comment">/* 版本 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __BYTE_ORDER == __BIG_ENDIAN <span class="comment">/*如果是大端*/</span></span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> ip_v:<span class="number">4</span>;		<span class="comment">/* 版本 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> ip_hl:<span class="number">4</span>;		<span class="comment">/* 头部长度 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">uint8_t</span> ip_tos;			<span class="comment">/* 服务类型 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> ip_len;		<span class="comment">/* 总长度 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> ip_id;		<span class="comment">/* 分组ID */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> ip_off;		<span class="comment">/* fragment offset field */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	IP_RF 0x8000			<span class="comment">/* reserved fragment flag */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	IP_DF 0x4000			<span class="comment">/* dont fragment flag */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	IP_MF 0x2000			<span class="comment">/* more fragments flag */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	IP_OFFMASK 0x1fff		<span class="comment">/* mask for fragmenting bits */</span></span></span><br><span class="line">    <span class="keyword">uint8_t</span> ip_ttl;			<span class="comment">/* 生存时间 */</span></span><br><span class="line">    <span class="keyword">uint8_t</span> ip_p;			<span class="comment">/* protocol 协议类型 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> ip_sum;		<span class="comment">/* 校验和 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">ip_src</span>, <span class="title">ip_dst</span>;</span>	<span class="comment">/*源ip和目的ip */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x02基本套接字使用和函数介绍"><a href="#0x02基本套接字使用和函数介绍" class="headerlink" title="0x02基本套接字使用和函数介绍"></a>0x02基本套接字使用和函数介绍</h3><hr>
+<h4 id="ioctl-函数"><a href="#ioctl-函数" class="headerlink" title="ioctl() 函数"></a>ioctl() 函数</h4><p>A device input and output control（ioctl）。是设备驱动程序对设备的I/O通道进行管理的函数</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00说明"><span class="toc-number">1.</span> <span class="toc-text">0x00说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01网络知识"><span class="toc-number">2.</span> <span class="toc-text">0x01网络知识</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#A-OSI模型"><span class="toc-number">2.1.</span> <span class="toc-text">A)OSI模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#B-网际协议族"><span class="toc-number">2.2.</span> <span class="toc-text">B)网际协议族</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-IP协议和IP头部在Linux里的结构体"><span class="toc-number">2.3.</span> <span class="toc-text">C)IP协议和IP头部在Linux里的结构体</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02基本套接字使用和函数介绍"><span class="toc-number">3.</span> <span class="toc-text">0x02基本套接字使用和函数介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ioctl-函数"><span class="toc-number">3.1.</span> <span class="toc-text">ioctl() 函数</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&text=(一) 原始套接字编程--网络基础"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&is_video=false&description=(一) 原始套接字编程--网络基础"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=(一) 原始套接字编程--网络基础&body=Check out this article: http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&title=(一) 原始套接字编程--网络基础"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/06/25/(一)原始套接字编程--网络基础/&name=(一) 原始套接字编程--网络基础&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 elloit
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

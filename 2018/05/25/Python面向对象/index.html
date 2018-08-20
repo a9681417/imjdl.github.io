@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言 Python 之禅 Beautiful is better than ugly(美丽胜于丑陋). Explicit is better than implicit(简单明了胜于晦涩难懂). Simple is better than complex(简洁胜于复杂). Complex is better than complicated(复杂胜于凌乱). Flat is better than">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python面向对象">
+<meta property="og:url" content="http://yoursite.com/2018/05/25/Python面向对象/index.html">
+<meta property="og:site_name" content="elloit blogs">
+<meta property="og:description" content="前言 Python 之禅 Beautiful is better than ugly(美丽胜于丑陋). Explicit is better than implicit(简单明了胜于晦涩难懂). Simple is better than complex(简洁胜于复杂). Complex is better than complicated(复杂胜于凌乱). Flat is better than">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T09:11:11.090Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python面向对象">
+<meta name="twitter:description" content="前言 Python 之禅 Beautiful is better than ugly(美丽胜于丑陋). Explicit is better than implicit(简单明了胜于晦涩难懂). Simple is better than complex(简洁胜于复杂). Complex is better than complicated(复杂胜于凌乱). Flat is better than">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Python面向对象</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/05/28/python学习-装饰器和u语法糖/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/04/30/python学习-偏函数/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/05/25/Python面向对象/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/05/25/Python面向对象/&text=Python面向对象"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/05/25/Python面向对象/&is_video=false&description=Python面向对象"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python面向对象&body=Check out this article: http://yoursite.com/2018/05/25/Python面向对象/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/05/25/Python面向对象/&name=Python面向对象&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#说明"><span class="toc-number">2.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#封装"><span class="toc-number">3.</span> <span class="toc-text">封装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#访问限制"><span class="toc-number">3.1.</span> <span class="toc-text">访问限制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继承"><span class="toc-number">4.</span> <span class="toc-text">继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多态"><span class="toc-number">5.</span> <span class="toc-text">多态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多态性（注意：多态与多态性是两种概念）"><span class="toc-number">6.</span> <span class="toc-text">多态性（注意：多态与多态性是两种概念）</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Python面向对象
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">elloit blogs</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-05-24T16:00:00.000Z" itemprop="datePublished">2018-05-25</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Python/">Python</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>Python 之禅</p>
+<pre><code>Beautiful is better than ugly(美丽胜于丑陋).
+Explicit is better than implicit(简单明了胜于晦涩难懂).
+Simple is better than complex(简洁胜于复杂).
+Complex is better than complicated(复杂胜于凌乱).
+Flat is better than nested(扁平胜于嵌套).
+Sparse is better than dense(间隔胜于紧凑).
+Readability counts(可读性非常重要).
+Special cases aren&apos;t special enough to break the rules(特殊情况不足以打破规则).
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced(不要包容所有错误，除非你确定需要这样做).
+In the face of ambiguity, refuse the temptation to guess(当存在多种可能，不要尝试去猜测).
+There should be one-- and preferably only one --obvious way to do it(而是尽量找一种，最好是唯一一种明显的解决方案).
+Although that way may not be obvious at first unless you&apos;re Dutch(虽然这并不容易，因为你不是 Python 之父).
+Now is better than never.
+Although never is often better than *right* now.(做也许好过不做，但不假思索就动手还不如不做)
+If the implementation is hard to explain, it&apos;s a bad idea.(如果你无法向人描述你的方案，那肯定不是一个好方案)
+If the implementation is easy to explain, it may be a good idea(如果你能很好的向人描述你的方案，那肯定是一个好方案).
+Namespaces are one honking great idea -- let&apos;s do more of those(命名空间是一种绝妙的理念，我们应当多加利用)
+</code></pre><hr>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>OOP Object Oriented Progranming 简称面向对象编程，是一种程序设计思想。<br>面向过程的程序设计把计算机程序视为一系列的命令集合，即一组函数的顺序执行，为了简化程序设计，面向过程把函数继续切分为子函数，即把大块函数通过切割分成小块函数来降低系统的复杂度。<br>面向对象的程序设计把计算机程序视为一组对象的集合，每个对象都可以接受其它对象发过来的消息，并处理这个消息，计算机程序的执行就是一系列消息在各对象之间的传递。<br>在Python中所有数据类型都可以视为对象，当然也可以自定义对象。自定义的对象就是class类的概念。面向对象的设计思想就是从自然界中来的，因为在自然界中，类(class)和实例(instance)概念是很自然的。class是一种抽象的概念，而实例是由class抽象出来的。<br>面向对象三大特点<em>封装</em>、<em>继承</em>和<em>多态</em>。当然<em>抽象</em>也是特点之一。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(Object)</span>:</span> <span class="comment"># 一个类</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(self)</span>:</span></span><br><span class="line">    print(<span class="number">123</span>)</span><br><span class="line">s = Student() <span class="comment"># 一个实例</span></span><br><span class="line">s.show()</span><br><span class="line"><span class="comment"># s 指向一个实例，每个实例的地址都不一样</span></span><br><span class="line"><span class="comment"># 可以自由的给一个实例变量绑定属性</span></span><br><span class="line">s.name = <span class="string">"elloit"</span></span><br><span class="line">s.age = <span class="number">21</span></span><br></pre></td></tr></table></figure>
+<p>由于类起到模板的作用，因此，可以在创建类的实例的时候，把一些我们必须绑定的属性强制填写进去<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(Object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, age)</span>:</span></span><br><span class="line">    self.name = name</span><br><span class="line">    self.age = age</span><br></pre></td></tr></table></figure></p>
+<p>在类中定义函数和普通函数相比，在类中定义的第一个参数是实例变量self（可能这里不太准确，以后会详细说明），并且，调用时，不用传递该参数。除此之外，类的方法和普通函数没有什么区别，你仍然可以用默认参数、可变参数、关键参数和命名关键字参数</p>
+<hr>
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><p>封装或者说包装、信息隐藏，是指利用抽象数据类型将数据和基于数据的操作封装在一起。系统的其它对象只能通过包裹在数据外面的已经授权的操作来与这个封装对象交流和交互。用户无需知道对象内部实现的细节，但是可以通过该对象对外提供的接口来访问。</p>
+<p><em>好处</em>：减少耦合，类内部的结构可以自由修改</p>
+<h4 id="访问限制"><a href="#访问限制" class="headerlink" title="访问限制"></a>访问限制</h4><p>定义类时如果没有限制，类的所有自定义的属性和方法都为public可以被随意访问。<br>如果不想被随意访问就在属性或方法名前加两个下划线，这样就变为私有属性或方法了<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, age)</span>:</span></span><br><span class="line">    self.__name = name <span class="comment"># 私有属性</span></span><br><span class="line">    self.__age = age</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__show</span><span class="params">(self)</span>:</span> <span class="comment"># 私有方法</span></span><br><span class="line">    print(<span class="number">123</span>)</span><br></pre></td></tr></table></figure></p>
+<p>当然我们也见过一个下划线开头的，这样的变量或方法外部也是可以访问的，意思为”请把我视为一个私有变量，不要随意访问”<br>即使是两个下划线其实也是可以访问的<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">13</span>]: <span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(object)</span>:</span></span><br><span class="line">    ...:   <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, age)</span>:</span></span><br><span class="line">    ...:     self.__name = name <span class="comment"># 私有属性</span></span><br><span class="line">    ...:     self.__age = age</span><br><span class="line">    ...:</span><br><span class="line">    ...:   <span class="function"><span class="keyword">def</span> <span class="title">__show</span><span class="params">(self)</span>:</span> <span class="comment"># 私有方法</span></span><br><span class="line">    ...:     print(<span class="number">123</span>)</span><br><span class="line">    ...:     </span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: s = Student(<span class="string">"elloit"</span>, <span class="number">12</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: s._Student__age</span><br><span class="line">Out[<span class="number">15</span>]: <span class="number">12</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: s._Student__show</span><br><span class="line">Out[<span class="number">16</span>]: &lt;bound method Student.__show of &lt;__main__.Student object at <span class="number">0x7fcc21823940</span>&gt;&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">17</span>]: s._Student__show()</span><br><span class="line"><span class="number">123</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">18</span>]:</span><br></pre></td></tr></table></figure></p>
+<p>“私有”属性存在两种不同的命名规则（单下划线和双下划线）。对于大部分情况，我们应该让非公有名称以单下划线开头，如果涉及到子类化处理，并且内部属性需要对子类隐藏时用双下划线。</p>
+<hr>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><hr>
+<h3 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h3><p>一个类继承了另一个或多个类并且重写了父类里的方法就为多态<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">people</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">    print(<span class="string">"people init"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">    print(<span class="string">"人类直立行走"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">student</span><span class="params">(people)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">    people.__init__(self)</span><br><span class="line">    print(<span class="string">"student init"</span>)</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">    print(<span class="string">"学生乘坐校车"</span>)</span><br></pre></td></tr></table></figure></p>
+<h3 id="多态性（注意：多态与多态性是两种概念）"><a href="#多态性（注意：多态与多态性是两种概念）" class="headerlink" title="多态性（注意：多态与多态性是两种概念）"></a>多态性（注意：多态与多态性是两种概念）</h3><p>多态性是指具有不同功能的函数可以使用相同的函数名，这样就可以用一个函数名调用不同内容的函数。在面向对象方法中一般是这样表述多态性：向不同的对象发送同一条消息，不同的对象在接收时会产生不同的行为（即方法）。也就是说，每个对象可以用自己的方式去响应共同的消息。所谓消息，就是调用函数，不同的行为就是指不同的实现，即执行不同的函数。</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#说明"><span class="toc-number">2.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#封装"><span class="toc-number">3.</span> <span class="toc-text">封装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#访问限制"><span class="toc-number">3.1.</span> <span class="toc-text">访问限制</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继承"><span class="toc-number">4.</span> <span class="toc-text">继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多态"><span class="toc-number">5.</span> <span class="toc-text">多态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多态性（注意：多态与多态性是两种概念）"><span class="toc-number">6.</span> <span class="toc-text">多态性（注意：多态与多态性是两种概念）</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/05/25/Python面向对象/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/05/25/Python面向对象/&text=Python面向对象"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/05/25/Python面向对象/&is_video=false&description=Python面向对象"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Python面向对象&body=Check out this article: http://yoursite.com/2018/05/25/Python面向对象/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/05/25/Python面向对象/&title=Python面向对象"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/05/25/Python面向对象/&name=Python面向对象&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 elloit
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

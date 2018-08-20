@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="说明&amp;emsp;之前介绍了es的安装和配置，今天我们介绍es的基本操作。 概念&amp;emsp;集群:一个或者多个节点组织在一起(多个服务器) &amp;emsp;节点:一个节点是集群中的一个服务器，由一个名字来标识 &amp;emsp;分片:将索引划分为多份的能力，允许水平分割和扩展容量，多个分片响应请求，提高性能和吞吐量 &amp;emsp;副本:创建分片的一份或多份的能力，在一个节点失败其余节点可以顶上    Elast">
+<meta name="keywords" content="ElasticSearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch 的CRUD">
+<meta property="og:url" content="http://yoursite.com/2018/03/14/ElasticSearch的CRUD/index.html">
+<meta property="og:site_name" content="elloit blogs">
+<meta property="og:description" content="说明&amp;emsp;之前介绍了es的安装和配置，今天我们介绍es的基本操作。 概念&amp;emsp;集群:一个或者多个节点组织在一起(多个服务器) &amp;emsp;节点:一个节点是集群中的一个服务器，由一个名字来标识 &amp;emsp;分片:将索引划分为多份的能力，允许水平分割和扩展容量，多个分片响应请求，提高性能和吞吐量 &amp;emsp;副本:创建分片的一份或多份的能力，在一个节点失败其余节点可以顶上    Elast">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T08:53:12.816Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElasticSearch 的CRUD">
+<meta name="twitter:description" content="说明&amp;emsp;之前介绍了es的安装和配置，今天我们介绍es的基本操作。 概念&amp;emsp;集群:一个或者多个节点组织在一起(多个服务器) &amp;emsp;节点:一个节点是集群中的一个服务器，由一个名字来标识 &amp;emsp;分片:将索引划分为多份的能力，允许水平分割和扩展容量，多个分片响应请求，提高性能和吞吐量 &amp;emsp;副本:创建分片的一份或多份的能力，在一个节点失败其余节点可以顶上    Elast">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ElasticSearch 的CRUD</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/03/15/elasticsearch的几种搜索/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/03/13/Elasticsearch_mget_bulk/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&text=ElasticSearch 的CRUD"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&is_video=false&description=ElasticSearch 的CRUD"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch 的CRUD&body=Check out this article: http://yoursite.com/2018/03/14/ElasticSearch的CRUD/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&name=ElasticSearch 的CRUD&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#说明"><span class="toc-number">1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建文档"><span class="toc-number">3.</span> <span class="toc-text">创建文档</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#自定义ID"><span class="toc-number">3.0.1.</span> <span class="toc-text">自定义ID</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文档"><span class="toc-number">4.</span> <span class="toc-text">更新文档</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#更新整个文档"><span class="toc-number">4.0.1.</span> <span class="toc-text">更新整个文档</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#更新文档部分"><span class="toc-number">4.0.2.</span> <span class="toc-text">更新文档部分</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除文档"><span class="toc-number">5.</span> <span class="toc-text">删除文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查文档是否存在"><span class="toc-number">6.</span> <span class="toc-text">检查文档是否存在</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ElasticSearch 的CRUD
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">elloit blogs</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-03-14T07:29:00.000Z" itemprop="datePublished">2018-03-14</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>&emsp;之前介绍了<a href="http://blog.elloit.xin/article/page/2/" target="_blank" rel="noopener">es的安装和配置</a>，今天我们介绍es的基本操作。</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>&emsp;<strong>集群:</strong>一个或者多个节点组织在一起(多个服务器)</p>
+<p>&emsp;<strong>节点:</strong>一个节点是集群中的一个服务器，由一个名字来标识</p>
+<p>&emsp;<strong>分片:</strong>将索引划分为多份的能力，允许水平分割和扩展容量，多个分片响应请求，提高性能和吞吐量</p>
+<p>&emsp;<strong>副本:</strong>创建分片的一份或多份的能力，在一个节点失败其余节点可以顶上</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Elasticsearch</th>
+<th>Mysql</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">index(索引)</td>
+<td>数据库</td>
+</tr>
+<tr>
+<td style="text-align:left">type(类型)</td>
+<td>表</td>
+</tr>
+<tr>
+<td style="text-align:left">documents(文档)</td>
+<td>行</td>
+</tr>
+<tr>
+<td style="text-align:left">fields</td>
+<td>列</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;<strong>Http方法:</strong></p>
+<ul>
+<li><p>Get 请求指定页面信息，并返回实体主体  </p>
+</li>
+<li><p>POST 向指定资源提交数据进行处理请求。数据被包含在请求体中。POST请求可能会导致新的资源的建立或已有资源的修改  </p>
+</li>
+<li><p>PUT 向服务器传送的数据取代指定的文档内容 </p>
+</li>
+<li><p>DELETE 请求服务器删除指定的页面 </p>
+</li>
+</ul>
+<hr>
+<p>&emsp;Elastcisearch 是分布式的 <em>文档</em> 存储。它能存储和检索复杂的数据结构—序列化成为JSON文档—以 <em>实时</em> 的方式。 换句话说，一旦一个文档被存储在 Elasticsearch 中，它就是可以被集群中的任意节点检索到。  </p>
+<p>&emsp;<strong>什么是文档?</strong></p>
+<p>&emsp;我们知道，一些实例或者对象都可以进行序列化为包含键值对的JSON对象，一个键可以是一个字段或字段的名称，一个值可以是一个字符串，一个数字，一个布尔值， 另一个对象，一些数组值，或一些其它特殊类型诸如表示日期的字符串，或代表一个地理位置的对象：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"elloit king"</span>,</span><br><span class="line">    <span class="attr">"age"</span>: <span class="number">21</span>,</span><br><span class="line">    <span class="attr">"home"</span>:&#123;</span><br><span class="line">        <span class="attr">"lat"</span>:      <span class="number">51.5</span>,</span><br><span class="line">        <span class="attr">"lon"</span>:      <span class="number">0.1</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"accounts"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"facebook"</span>,</span><br><span class="line">            <span class="attr">"id"</span>:   <span class="string">"johnsmith"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"twitter"</span>,</span><br><span class="line">            <span class="attr">"id"</span>:   <span class="string">"johnsmith"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;文档元数据</p>
+<p>&emsp;一个文档不仅仅包含了它的数据，也包含了一些和它相关的数据。三个必要数据如下:</p>
+<p><code>_index</code>     如同上面表格所示，表示了文档所在的索引</p>
+<p><code>_type</code>    文档表示的对象类别</p>
+<p><code>_id</code>    文档唯一标识</p>
+<hr>
+<h3 id="创建文档"><a href="#创建文档" class="headerlink" title="创建文档"></a>创建文档</h3><h5 id="自定义ID"><a href="#自定义ID" class="headerlink" title="自定义ID"></a>自定义ID</h5><p><em>ps:可以在kibana里执行下面语句，也可在终端里用curl</em></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT /&#123;index&#125;/&#123;type&#125;/&#123;id&#125;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"filed"</span>:<span class="string">"value"</span>,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例子:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT website/blogs/1</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"title"</span>:<span class="string">"elloit 博客"</span>,</span><br><span class="line">    <span class="attr">"text"</span>: <span class="string">"test blog"</span>,</span><br><span class="line">    <span class="attr">"date"</span>: <span class="string">"2017/11/11"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>响应:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"result"</span>: <span class="string">"created"</span>,</span><br><span class="line">  <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">    <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"_seq_no"</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到文档创建成功，响应里包括 <code>_index</code> <code>_type</code> <code>_id</code> 还多了一个 <code>_version</code>  。对文档的修改都会使得version增加。</p>
+<p>当没有指定ID时，es会自动生成。这时候就不能使用 PUT了，替换为POST</p>
+<p>例如:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST website/blogs/</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"title"</span>:<span class="string">"King 博客"</span>,</span><br><span class="line">    <span class="attr">"text"</span>: <span class="string">"test blogv2"</span>,</span><br><span class="line">    <span class="attr">"date"</span>: <span class="string">"2017/12/12"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>响应:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"TQBVcWMBjaqJaYAvf53f"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"result"</span>: <span class="string">"created"</span>,</span><br><span class="line">  <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">    <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"_seq_no"</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>###取出文档</p>
+<p>取出一个文档，需要指定 index、type和id</p>
+<p>&emsp;取出一个文档，需要指定 index、type和id</p>
+<p>例如:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET website/blogs/1</span><br></pre></td></tr></table></figure>
+<p>响应:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"found"</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">"_source"</span>: &#123;</span><br><span class="line">    <span class="attr">"title"</span>: <span class="string">"elloit 博客"</span>,</span><br><span class="line">    <span class="attr">"text"</span>: <span class="string">"test blog"</span>,</span><br><span class="line">    <span class="attr">"date"</span>: <span class="string">"2017/11/11"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>取出文档的一部分</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET website/blogs/1?_source=title</span><br></pre></td></tr></table></figure>
+<p>返回:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"found"</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">"_source"</span>: &#123;</span><br><span class="line">    <span class="attr">"title"</span>: <span class="string">"elloit 博客"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只取出source</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET website/blogs/1/_source</span><br></pre></td></tr></table></figure>
+<p>返回:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"title"</span>: <span class="string">"elloit 博客"</span>,</span><br><span class="line">  <span class="attr">"text"</span>: <span class="string">"test blog"</span>,</span><br><span class="line">  <span class="attr">"date"</span>: <span class="string">"2017/11/11"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="更新文档"><a href="#更新文档" class="headerlink" title="更新文档"></a>更新文档</h3><h5 id="更新整个文档"><a href="#更新整个文档" class="headerlink" title="更新整个文档"></a>更新整个文档</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT website/blogs/1</span><br><span class="line">&#123;</span><br><span class="line">    &quot;title&quot;:&quot;elloit 博客&quot;,</span><br><span class="line">    &quot;text&quot;: &quot;test blogvvvvv3&quot;,</span><br><span class="line">    &quot;date&quot;: &quot;2017/11/11&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">"result"</span>: <span class="string">"updated"</span>,</span><br><span class="line">  <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">    <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"_seq_no"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 version已经变为2了,其实这种方法就是把以前的数据给覆盖掉(不推荐使用)。</p>
+<h5 id="更新文档部分"><a href="#更新文档部分" class="headerlink" title="更新文档部分"></a>更新文档部分</h5><p>可以使用POST 更新文档的部分</p>
+<p>更新前</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;title&quot;: &quot;elloit 博客&quot;,</span><br><span class="line">    &quot;text&quot;: &quot;test blogvvvvv3&quot;,</span><br><span class="line">    &quot;date&quot;: &quot;2017/11/11&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更新:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST website/blogs/1/_update</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"doc"</span>:&#123;</span><br><span class="line">     	<span class="attr">"title"</span>:<span class="string">"elloit 博客"</span>,</span><br><span class="line">    	<span class="attr">"text"</span>: <span class="string">"test blogvvvvv4"</span>,</span><br><span class="line">    	<span class="attr">"date"</span>: <span class="string">"2017/11/11"</span>   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>响应:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_index"</span>: <span class="string">"website"</span>,</span><br><span class="line">  <span class="attr">"_type"</span>: <span class="string">"blogs"</span>,</span><br><span class="line">  <span class="attr">"_id"</span>: <span class="string">"1"</span>,</span><br><span class="line">  <span class="attr">"_version"</span>: <span class="number">3</span>,</span><br><span class="line">  <span class="attr">"result"</span>: <span class="string">"updated"</span>,</span><br><span class="line">  <span class="attr">"_shards"</span>: &#123;</span><br><span class="line">    <span class="attr">"total"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="attr">"successful"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"failed"</span>: <span class="number">0</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"_seq_no"</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">"_primary_term"</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除文档"><a href="#删除文档" class="headerlink" title="删除文档"></a>删除文档</h3><p><code>DELETE website/blogs/1</code></p>
+<p>响应:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot;: &quot;website&quot;,</span><br><span class="line">  &quot;_type&quot;: &quot;blogs&quot;,</span><br><span class="line">  &quot;_id&quot;: &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot;: 4,</span><br><span class="line">  &quot;result&quot;: &quot;deleted&quot;,</span><br><span class="line">  &quot;_shards&quot;: &#123;</span><br><span class="line">    &quot;total&quot;: 2,</span><br><span class="line">    &quot;successful&quot;: 1,</span><br><span class="line">    &quot;failed&quot;: 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_seq_no&quot;: 3,</span><br><span class="line">  &quot;_primary_term&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="检查文档是否存在"><a href="#检查文档是否存在" class="headerlink" title="检查文档是否存在"></a>检查文档是否存在</h3><p><code>HEAD website/blogs/1</code></p>
+<p>存在返回 200 -OK</p>
+<p>不存在返回 404 - Not Found</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#说明"><span class="toc-number">1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建文档"><span class="toc-number">3.</span> <span class="toc-text">创建文档</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#自定义ID"><span class="toc-number">3.0.1.</span> <span class="toc-text">自定义ID</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文档"><span class="toc-number">4.</span> <span class="toc-text">更新文档</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#更新整个文档"><span class="toc-number">4.0.1.</span> <span class="toc-text">更新整个文档</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#更新文档部分"><span class="toc-number">4.0.2.</span> <span class="toc-text">更新文档部分</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除文档"><span class="toc-number">5.</span> <span class="toc-text">删除文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检查文档是否存在"><span class="toc-number">6.</span> <span class="toc-text">检查文档是否存在</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&text=ElasticSearch 的CRUD"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&is_video=false&description=ElasticSearch 的CRUD"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch 的CRUD&body=Check out this article: http://yoursite.com/2018/03/14/ElasticSearch的CRUD/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&title=ElasticSearch 的CRUD"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/14/ElasticSearch的CRUD/&name=ElasticSearch 的CRUD&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 elloit
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+

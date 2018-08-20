@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="取出多个文档&amp;emsp;mget API 要求有一个 docs 数组作为参数，每个元素包含需要检索文档的元数据， 包括 _index 、 _type 和 _id 。如果你想检索一个或者多个特定的字段，那么你可以通过 _source 参数来指定这些字段的名字 12345678910111213141516GET /_mget&amp;#123;   &quot;docs&quot; : [      &amp;#123;">
+<meta name="keywords" content="ElasticSearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticSearch mget &amp; bulk">
+<meta property="og:url" content="http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/index.html">
+<meta property="og:site_name" content="elloit blogs">
+<meta property="og:description" content="取出多个文档&amp;emsp;mget API 要求有一个 docs 数组作为参数，每个元素包含需要检索文档的元数据， 包括 _index 、 _type 和 _id 。如果你想检索一个或者多个特定的字段，那么你可以通过 _source 参数来指定这些字段的名字 12345678910111213141516GET /_mget&amp;#123;   &quot;docs&quot; : [      &amp;#123;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-19T08:52:45.920Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElasticSearch mget &amp; bulk">
+<meta name="twitter:description" content="取出多个文档&amp;emsp;mget API 要求有一个 docs 数组作为参数，每个元素包含需要检索文档的元数据， 包括 _index 、 _type 和 _id 。如果你想检索一个或者多个特定的字段，那么你可以通过 _source 参数来指定这些字段的名字 12345678910111213141516GET /_mget&amp;#123;   &quot;docs&quot; : [      &amp;#123;">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>ElasticSearch mget &amp; bulk</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/03/14/ElasticSearch的CRUD/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/03/12/elastcisearch mapping介绍/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&text=ElasticSearch mget &amp; bulk"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&is_video=false&description=ElasticSearch mget &amp; bulk"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch mget &amp; bulk&body=Check out this article: http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&name=ElasticSearch mget &amp; bulk&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#取出多个文档"><span class="toc-number">1.</span> <span class="toc-text">取出多个文档</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        ElasticSearch mget &amp; bulk
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">elloit blogs</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-03-13T07:29:00.000Z" itemprop="datePublished">2018-03-13</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/ElasticSearch/">ElasticSearch</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="取出多个文档"><a href="#取出多个文档" class="headerlink" title="取出多个文档"></a>取出多个文档</h3><p>&emsp;<code>mget</code> API 要求有一个 <code>docs</code> 数组作为参数，每个元素包含需要检索文档的元数据， 包括 <code>_index</code> 、 <code>_type</code> 和 <code>_id</code> 。如果你想检索一个或者多个特定的字段，那么你可以通过 <code>_source</code> 参数来指定这些字段的名字</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">GET /_mget</span><br><span class="line">&#123;</span><br><span class="line">   <span class="attr">"docs"</span> : [</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="attr">"_index"</span> : <span class="string">"website"</span>,</span><br><span class="line">         <span class="attr">"_type"</span> :  <span class="string">"blog"</span>,</span><br><span class="line">         <span class="attr">"_id"</span> :    <span class="number">2</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="attr">"_index"</span> : <span class="string">"website"</span>,</span><br><span class="line">         <span class="attr">"_type"</span> :  <span class="string">"pageviews"</span>,</span><br><span class="line">         <span class="attr">"_id"</span> :    <span class="number">1</span>,</span><br><span class="line">         <span class="attr">"_source"</span>: <span class="string">"views"</span></span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该响应体也包含一个 <code>docs</code> 数组， 对于每一个在请求中指定的文档，这个数组中都包含有一个对应的响应，且顺序与请求中的顺序相同。 其中的每一个响应都和使用单个 <code>get</code> request 请求所得到的响应体相同：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="attr">"docs"</span> : [</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="attr">"_index"</span> :   <span class="string">"website"</span>,</span><br><span class="line">         <span class="attr">"_id"</span> :      <span class="string">"2"</span>,</span><br><span class="line">         <span class="attr">"_type"</span> :    <span class="string">"blog"</span>,</span><br><span class="line">         <span class="attr">"found"</span> :    <span class="literal">true</span>,</span><br><span class="line">         <span class="attr">"_source"</span> : &#123;</span><br><span class="line">            <span class="attr">"text"</span> :  <span class="string">"This is a piece of cake..."</span>,</span><br><span class="line">            <span class="attr">"title"</span> : <span class="string">"My first external blog entry"</span></span><br><span class="line">         &#125;,</span><br><span class="line">         <span class="attr">"_version"</span> : <span class="number">10</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="attr">"_index"</span> :   <span class="string">"website"</span>,</span><br><span class="line">         <span class="attr">"_id"</span> :      <span class="string">"1"</span>,</span><br><span class="line">         <span class="attr">"_type"</span> :    <span class="string">"pageviews"</span>,</span><br><span class="line">         <span class="attr">"found"</span> :    <span class="literal">true</span>,</span><br><span class="line">         <span class="attr">"_version"</span> : <span class="number">2</span>,</span><br><span class="line">         <span class="attr">"_source"</span> : &#123;</span><br><span class="line">            <span class="attr">"views"</span> : <span class="number">2</span></span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果想检索的数据都在相同的 <code>_index</code> 中（甚至相同的 <code>_type</code> 中），则可以在 URL 中指定默认的 <code>/_index</code> 或者默认的  <code>/_index/_type</code> 。</p>
+<p>你仍然可以通过单独请求覆盖这些值：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_mget</span><br><span class="line">&#123;</span><br><span class="line">   <span class="attr">"docs"</span> : [</span><br><span class="line">      &#123; <span class="attr">"_id"</span> : <span class="number">2</span> &#125;,</span><br><span class="line">      &#123; <span class="attr">"_type"</span> : <span class="string">"pageviews"</span>, <span class="attr">"_id"</span> :   <span class="number">1</span> &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>事实上，如果所有文档的 <code>_index</code> 和 <code>_type</code> 都是相同的，你可以只传一个 <code>ids</code> 数组，而不是整个 <code>docs</code> 数组：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/_mget</span><br><span class="line">&#123;</span><br><span class="line">   <span class="attr">"ids"</span> : [ <span class="string">"2"</span>, <span class="string">"1"</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>与 <code>mget</code> 可以使我们一次取回多个文档同样的方式， <code>bulk</code> API 允许在单个步骤中进行多次 <code>create</code> 、 <code>index</code> 、 <code>update</code> 或 <code>delete</code> 请求。 如果你需要索引一个数据流比如日志事件，它可以排队和索引数百或数千批次。</p>
+<p><code>bulk</code> 与其他的请求体格式稍有不同，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123; action: &#123; metadata &#125;&#125;\n</span><br><span class="line">&#123; request body        &#125;\n</span><br><span class="line">&#123; action: &#123; metadata &#125;&#125;\n</span><br><span class="line">&#123; request body        &#125;\n</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这种格式类似一个有效的单行 JSON 文档 <em>流</em> ，它通过换行符(<code>\n</code>)连接到一起。注意两个要点：</p>
+<ul>
+<li>每行一定要以换行符(<code>\n</code>)结尾， <em>包括最后一行</em> 。这些换行符被用作一个标记，可以有效分隔行。</li>
+<li>这些行不能包含未转义的换行符，因为他们将会对解析造成干扰。这意味着这个 JSON <em>不</em> 能使用 pretty 参数打印。</li>
+</ul>
+<p>action/metadata 行指定 <em>哪一个文档</em> 做 <em>什么操作</em> 。</p>
+<p>action 必须是以下选项之一:</p>
+<ul>
+<li><p><code>create</code></p>
+<p> 如果文档不存在，那么就创建它。</p>
+</li>
+<li><p><code>index</code></p>
+<p> 创建一个新文档或者替换一个现有的文档。 </p>
+</li>
+<li><p><code>update</code></p>
+<p> 部分更新一个文档。</p>
+</li>
+<li><p><code>delete</code></p>
+<p> 删除一个文档。</p>
+</li>
+</ul>
+<p>metadata 应该指定被索引、创建、更新或者删除的文档的 <code>_index</code> 、 <code>_type</code> 和 <code>_id</code> 。</p>
+<p>例如，一个 <code>delete</code> 请求看起来是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;delete&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>request body 行由文档的 <code>_source</code> 本身组成—文档包含的字段和值。它是 <code>index</code> 和 <code>create</code> 操作所必需的，这是有道理的：你必须提供文档以索引。</p>
+<p>它也是 <code>update</code> 操作所必需的，并且应该包含你传递给 <code>update</code> API 的相同请求体： <code>doc</code> 、 <code>upsert</code> 、 <code>script</code> 等等。 删除操作不需要 request body 行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;create&quot;:  &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My first blog post&quot; &#125;</span><br></pre></td></tr></table></figure>
+<p>如果不指定 <code>_id</code> ，将会自动生成一个 ID ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;index&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My second blog post&quot; &#125;</span><br></pre></td></tr></table></figure>
+<p>为了把所有的操作组合在一起，一个完整的 <code>bulk</code> 请求 有以下形式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /_bulk</span><br><span class="line">&#123; &quot;delete&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125; (1)</span><br><span class="line">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My first blog post&quot; &#125;</span><br><span class="line">&#123; &quot;index&quot;:  &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;:    &quot;My second blog post&quot; &#125;</span><br><span class="line">&#123; &quot;update&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot;, &quot;_retry_on_conflict&quot; : 3&#125; &#125;</span><br><span class="line">&#123; &quot;doc&quot; : &#123;&quot;title&quot; : &quot;My updated blog post&quot;&#125; &#125; (2)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>请注意 <code>delete</code> 动作不能有请求体,它后面跟着的是另外一个操作。</li>
+<li>谨记最后一个换行符不要落下。</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#取出多个文档"><span class="toc-number">1.</span> <span class="toc-text">取出多个文档</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&text=ElasticSearch mget &amp; bulk"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&is_video=false&description=ElasticSearch mget &amp; bulk"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=ElasticSearch mget &amp; bulk&body=Check out this article: http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&title=ElasticSearch mget &amp; bulk"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/13/Elasticsearch_mget_bulk/&name=ElasticSearch mget &amp; bulk&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 elloit
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/imjdl">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
