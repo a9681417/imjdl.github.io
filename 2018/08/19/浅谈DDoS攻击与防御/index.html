@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多爱仕达所多什么是DDoSDDoS攻击方式DDoS 防御爱仕达所多">
+    <meta name="description" content="前言什么是DDoSDDoS攻击方式DDoS 防御">
 <meta name="keywords" content="Web安全">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈DDoS攻击与防御">
 <meta property="og:url" content="http://yoursite.com/2018/08/19/浅谈DDoS攻击与防御/index.html">
 <meta property="og:site_name" content="elloit blogs">
-<meta property="og:description" content="前言爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多爱仕达所多什么是DDoSDDoS攻击方式DDoS 防御爱仕达所多">
+<meta property="og:description" content="前言什么是DDoSDDoS攻击方式DDoS 防御">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-20T00:31:08.200Z">
+<meta property="og:updated_time" content="2018-08-20T03:40:04.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈DDoS攻击与防御">
-<meta name="twitter:description" content="前言爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多爱仕达所多什么是DDoSDDoS攻击方式DDoS 防御爱仕达所多">
+<meta name="twitter:description" content="前言什么是DDoSDDoS攻击方式DDoS 防御">
     
     
         
@@ -65,7 +65,7 @@
          
           <li><a href="/archives/">Writing</a></li>
          
-          <li><a href="https://github.com/imjdl">Projects</a></li>
+          <li><a href="/projects/">Projects</a></li>
         
       </ul>
     </span>
@@ -73,8 +73,10 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2018/08/20/APT攻击与防护/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" href="/2018/06/25/(一)原始套接字编程--网络基础/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="/2018/07/28/中国菜刀抓包分析/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -101,7 +103,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爱仕达所多爱仕达所多-爱仕达所多爱仕达所多"><span class="toc-number">1.0.1.</span> <span class="toc-text">爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#爱仕达所多"><span class="toc-number">1.0.2.</span> <span class="toc-text">爱仕达所多</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是DDoS"><span class="toc-number">2.</span> <span class="toc-text">什么是DDoS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DDoS攻击方式"><span class="toc-number">3.</span> <span class="toc-text">DDoS攻击方式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DDoS-防御"><span class="toc-number">4.</span> <span class="toc-text">DDoS 防御</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是DDoS"><span class="toc-number">2.</span> <span class="toc-text">什么是DDoS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DDoS攻击方式"><span class="toc-number">3.</span> <span class="toc-text">DDoS攻击方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DDoS-防御"><span class="toc-number">4.</span> <span class="toc-text">DDoS 防御</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -140,8 +142,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><h3 id="爱仕达所多爱仕达所多-爱仕达所多爱仕达所多"><a href="#爱仕达所多爱仕达所多-爱仕达所多爱仕达所多" class="headerlink" title="爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多"></a>爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多</h3><h3 id="爱仕达所多"><a href="#爱仕达所多" class="headerlink" title="爱仕达所多"></a>爱仕达所多</h3><h1 id="什么是DDoS"><a href="#什么是DDoS" class="headerlink" title="什么是DDoS"></a>什么是DDoS</h1><h1 id="DDoS攻击方式"><a href="#DDoS攻击方式" class="headerlink" title="DDoS攻击方式"></a>DDoS攻击方式</h1><h1 id="DDoS-防御"><a href="#DDoS-防御" class="headerlink" title="DDoS 防御"></a>DDoS 防御</h1><p><a href="#什么是DDoS">爱仕达所多</a></p>
-
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><h3 id="什么是DDoS"><a href="#什么是DDoS" class="headerlink" title="什么是DDoS"></a>什么是DDoS</h3><h3 id="DDoS攻击方式"><a href="#DDoS攻击方式" class="headerlink" title="DDoS攻击方式"></a>DDoS攻击方式</h3><h3 id="DDoS-防御"><a href="#DDoS-防御" class="headerlink" title="DDoS 防御"></a>DDoS 防御</h3>
   </div>
 </article>
 
@@ -161,13 +162,13 @@
          
           <li><a href="/archives/">Writing</a></li>
          
-          <li><a href="https://github.com/imjdl">Projects</a></li>
+          <li><a href="/projects/">Projects</a></li>
         
       </ul>
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#爱仕达所多爱仕达所多-爱仕达所多爱仕达所多"><span class="toc-number">1.0.1.</span> <span class="toc-text">爱仕达所多爱仕达所多 = 爱仕达所多爱仕达所多</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#爱仕达所多"><span class="toc-number">1.0.2.</span> <span class="toc-text">爱仕达所多</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是DDoS"><span class="toc-number">2.</span> <span class="toc-text">什么是DDoS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DDoS攻击方式"><span class="toc-number">3.</span> <span class="toc-text">DDoS攻击方式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DDoS-防御"><span class="toc-number">4.</span> <span class="toc-text">DDoS 防御</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是DDoS"><span class="toc-number">2.</span> <span class="toc-text">什么是DDoS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DDoS攻击方式"><span class="toc-number">3.</span> <span class="toc-text">DDoS攻击方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DDoS-防御"><span class="toc-number">4.</span> <span class="toc-text">DDoS 防御</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
@@ -211,7 +212,7 @@
          
           <li><a href="/archives/">Writing</a></li>
          
-          <li><a href="https://github.com/imjdl">Projects</a></li>
+          <li><a href="/projects/">Projects</a></li>
         
       </ul>
     </nav>
